@@ -10,28 +10,29 @@
 
 template<typename T>
 inline typename std::enable_if<std::is_integral<T>::value, void>::type
-print_ip(T const&& ip) {
-    std::cout << "integral" << std::endl;
+print_ip(T const&& ip, std::ostream &out = std::cout) {
+    out << "integral" << std::endl;
 }
 
 template<typename T>
 inline typename std::enable_if<std::is_same<T, std::string>::value, void>::type
-print_ip(T const&& ip) {
-    std::cout << "string" << std::endl;
+print_ip(T const&& ip, std::ostream &out = std::cout) {
+    out << "string" << std::endl;
 }
 
-template<typename T, typename = std::enable_if_t<is_vector_or_list_v<T>>>
-void print_ip(T const&& c) {
-    std::cout << "container" << std::endl;
+template<typename T>
+inline typename std::enable_if_t<is_vector_or_list_v<T>>
+print_ip(T const&& c, std::ostream &out = std::cout) {
+    out << "container" << std::endl;
 }
 
 template <typename... Args>
 void print_tuple(std::tuple<Args...> const& tuple, std::ostream &out = std::cout) {
-    std::cout << "tuple" << std::endl;
+    out << "tuple" << std::endl;
 }
 
 template <typename T, std::enable_if_t<is_tuple_v<T>, bool> = true>
-void print_ip(T const &tuple, std::ostream &out = std::cout) {
+void print_ip(T const& tuple, std::ostream &out = std::cout) {
     print_tuple(tuple, out);
 }
 
