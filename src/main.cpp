@@ -1,38 +1,44 @@
 #include <iostream>
-#include <type_traits>
-#include <vector>
-#include <list>
-#include <tuple>
 #include <string>
-#include <cstdint>
 
 #include "traits.h"
 
 template<typename T>
 inline typename std::enable_if<std::is_integral<T>::value, void>::type
 print_ip(T const&& ip, std::ostream &out = std::cout) {
-    out << "integral" << std::endl;
+    const size_t size = sizeof(T);
+    for (size_t i = size; i--;) {
+        out << (ip >> (i << 3) & 0xFF);
+        if (i > 0)
+            out << '.';
+    }
+    out << std::endl;
 }
 
 template<typename T>
 inline typename std::enable_if<std::is_same<T, std::string>::value, void>::type
 print_ip(T const&& ip, std::ostream &out = std::cout) {
-    out << "string" << std::endl;
+    out << ip << std::endl;
 }
 
 template<typename T>
 inline typename std::enable_if_t<is_vector_or_list_v<T>>
 print_ip(T const&& c, std::ostream &out = std::cout) {
-    out << "container" << std::endl;
+    for (auto it = c.begin(); it != c.end(); ++it) {
+        out << *it;
+        if (it != std::prev(c.end()))
+            out << '.';
+    }
+    out << std::endl;
 }
 
 template <typename... Args>
-void print_tuple(std::tuple<Args...> const& tuple, std::ostream &out = std::cout) {
+inline void print_tuple(std::tuple<Args...> const& tuple, std::ostream &out = std::cout) {
     out << "tuple" << std::endl;
 }
 
 template <typename T, std::enable_if_t<is_tuple_v<T>, bool> = true>
-void print_ip(T const& tuple, std::ostream &out = std::cout) {
+inline void print_ip(T const& tuple, std::ostream &out = std::cout) {
     print_tuple(tuple, out);
 }
 
