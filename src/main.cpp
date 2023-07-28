@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <tuple>
 
 #include "traits.h"
 
@@ -42,10 +43,22 @@ void print_tuple(const std::tuple<T...>& tuple, std::ostream &out = std::cout)
     print(tuple, std::make_index_sequence<sizeof...(T)>());
 }
 
-template <typename T, enable_if_tuple<T> = 0>
-void print_ip(T const& tuple, std::ostream &out = std::cout) {
-    print_tuple(tuple);
-    out << std::endl;
+template<typename Tuple, size_t... I>
+void print_tuple(Tuple const& t, std::index_sequence<I...>, std::ostream &out = std::cout) {
+    size_t index = 0;
+    auto printElem = [&index, &out](const auto& x) {
+        if (index++ > 0)
+            out << '.';
+        out << x;
+    };
+
+    (printElem(std::get<I>(t)), ...);
+}
+
+
+template <typename Tuple, size_t Size = std::tuple_size_v<Tuple>, enable_if_tuple<Tuple> = 0>
+void print_ip(Tuple const& tuple, std::ostream &out = std::cout) {
+    print_tuple(tuple, std::make_index_sequence<Size>{});
 }
 
 int main()
