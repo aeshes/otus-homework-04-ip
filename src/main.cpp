@@ -3,9 +3,8 @@
 
 #include "traits.h"
 
-template<typename T>
-inline typename std::enable_if<std::is_integral<T>::value, void>::type
-print_ip(T const&& ip, std::ostream &out = std::cout) {
+template<typename T, enable_if_integral<T> = 0>
+void print_ip(T const&& ip, std::ostream &out = std::cout) {
     const size_t size = sizeof(T);
     for (size_t i = size; i--;) {
         out << (ip >> (i << 3) & 0xFF);
@@ -15,15 +14,13 @@ print_ip(T const&& ip, std::ostream &out = std::cout) {
     out << std::endl;
 }
 
-template<typename T>
-inline typename std::enable_if<std::is_same<T, std::string>::value, void>::type
-print_ip(T const&& ip, std::ostream &out = std::cout) {
+template<typename T, enable_if_string<T> = 0>
+void print_ip(T const&& ip, std::ostream &out = std::cout) {
     out << ip << std::endl;
 }
 
-template<typename T>
-inline typename std::enable_if_t<is_vector_or_list_v<T>>
-print_ip(T const&& c, std::ostream &out = std::cout) {
+template<typename T, enable_if_vector_or_list<T> = 0>
+void print_ip(T const&& c, std::ostream &out = std::cout) {
     for (auto it = c.begin(); it != c.end(); ++it) {
         out << *it;
         if (it != std::prev(c.end()))
@@ -33,12 +30,12 @@ print_ip(T const&& c, std::ostream &out = std::cout) {
 }
 
 template <typename... Args>
-inline void print_tuple(std::tuple<Args...> const& tuple, std::ostream &out = std::cout) {
+void print_tuple(std::tuple<Args...> const& tuple, std::ostream &out = std::cout) {
     out << "tuple" << std::endl;
 }
 
-template <typename T, std::enable_if_t<is_tuple_v<T>, bool> = true>
-inline void print_ip(T const& tuple, std::ostream &out = std::cout) {
+template <typename T, enable_if_tuple<T> = 0>
+void print_ip(T const& tuple, std::ostream &out = std::cout) {
     print_tuple(tuple, out);
 }
 
