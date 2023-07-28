@@ -31,18 +31,6 @@ void print_ip(T const&& c, std::ostream &out = std::cout) {
     out << std::endl;
 }
 
-template<class TupType, size_t... I>
-void print(const TupType& _tup, std::index_sequence<I...>, std::ostream &out = std::cout)
-{
-    (..., (out << (I == 0 ? "" : ".") << std::get<I>(_tup)));
-}
-
-template<class... T>
-void print_tuple(const std::tuple<T...>& tuple, std::ostream &out = std::cout)
-{
-    print(tuple, std::make_index_sequence<sizeof...(T)>());
-}
-
 template<typename Tuple, size_t... I>
 void print_tuple(Tuple const& t, std::index_sequence<I...>, std::ostream &out = std::cout) {
     size_t index = 0;
@@ -55,10 +43,9 @@ void print_tuple(Tuple const& t, std::index_sequence<I...>, std::ostream &out = 
     (printElem(std::get<I>(t)), ...);
 }
 
-
-template <typename Tuple, size_t Size = std::tuple_size_v<Tuple>, enable_if_tuple<Tuple> = 0>
+template <typename Tuple, enable_if_tuple<Tuple> = 0>
 void print_ip(Tuple const& tuple, std::ostream &out = std::cout) {
-    print_tuple(tuple, std::make_index_sequence<Size>{});
+    print_tuple(tuple, std::make_index_sequence<std::tuple_size_v<Tuple>>{});
 }
 
 int main()
