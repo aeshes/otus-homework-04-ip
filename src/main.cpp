@@ -3,6 +3,7 @@
 
 #include "traits.h"
 
+
 template<typename T, enable_if_integral<T> = 0>
 void print_ip(T const&& ip, std::ostream &out = std::cout) {
     const size_t size = sizeof(T);
@@ -29,14 +30,22 @@ void print_ip(T const&& c, std::ostream &out = std::cout) {
     out << std::endl;
 }
 
-template <typename... Args>
-void print_tuple(std::tuple<Args...> const& tuple, std::ostream &out = std::cout) {
-    out << "tuple" << std::endl;
+template<class TupType, size_t... I>
+void print(const TupType& _tup, std::index_sequence<I...>, std::ostream &out = std::cout)
+{
+    (..., (out << (I == 0 ? "" : ".") << std::get<I>(_tup)));
+}
+
+template<class... T>
+void print_tuple(const std::tuple<T...>& tuple, std::ostream &out = std::cout)
+{
+    print(tuple, std::make_index_sequence<sizeof...(T)>());
 }
 
 template <typename T, enable_if_tuple<T> = 0>
 void print_ip(T const& tuple, std::ostream &out = std::cout) {
-    print_tuple(tuple, out);
+    print_tuple(tuple);
+    out << std::endl;
 }
 
 int main()
