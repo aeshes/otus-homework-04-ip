@@ -35,4 +35,4 @@ jobs:
           asset_path: ./print-ip-0.0.${{ github.run_number }}-Linux.deb
           asset_name: print-ip-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
-        uses: mattnotmitt/doxygen-action@v1.9.5
+      - uses: mattnotmitt/doxygen-action@v1.9.5
