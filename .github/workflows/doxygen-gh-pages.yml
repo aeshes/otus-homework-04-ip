@@ -22,36 +22,28 @@ on:
   push:
     branches:
       - main
-
-runs:
-  using: "composite"
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        submodules: true
-    - name: Install Doxygen
-      run: sudo apt-get install doxygen -y
-      shell: bash
-    - name: Generate Doxygen documentation
-      run: doxygen
-      shell: bash
-    - name: Create .nojekyll
-      run: touch ${{ inputs.folder }}/.nojekyll
-      shell: bash
-    - name: Deploy to github pages
-      uses: JamesIves/github-pages-deploy-action@3.7.1
-      with:
-        github_token: ${{ inputs.github_token }}
-        branch: $${ inputs.branch }}
-        folder: {{ inputs.folder }}
-
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build:
+    runs:
+    using: "composite"
     steps:
-      - uses: DenverCoder1/doxygen-github-pages-action@v1.3.0
+      - name: Checkout repository
+        uses: actions/checkout@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: docs/html
+          submodules: true
+      - name: Install Doxygen
+        run: sudo apt-get install doxygen -y
+        shell: bash
+      - name: Generate Doxygen documentation
+        run: doxygen
+        shell: bash
+      - name: Create .nojekyll
+        run: touch ${{ inputs.folder }}/.nojekyll
+        shell: bash
+      - name: Deploy to github pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          github_token: ${{ inputs.github_token }}
+          branch: $${ inputs.branch }}
+          folder: {{ inputs.folder }}
+
