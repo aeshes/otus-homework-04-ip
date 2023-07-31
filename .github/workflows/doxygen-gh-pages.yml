@@ -1,16 +1,48 @@
 name: Doxygen GitHub Pages Deploy Action
+author: 'Aoizora'
+description: 'Make docs with Doxygen'
+branding:
+  icon: "upload-cloud"
+  color: "purple"
+
+input:
+  github_token:
+    description: 'A github token for pushing to the repository'
+    required: true
+  branch:
+    description: 'Branch name for pushing github pages files'
+    required: true
+    default: 'gh-pages'
+folder:
+  description: 'Folder where Doxygen will generate the HTML'
+  required: true
+  default: 'docs/html'
 
 on:
   push:
     branches:
       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: DenverCoder1/doxygen-github-pages-action@v1.3.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: docs/html
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Install Doxygen
+      run: sudo apt-get install doxygen -y
+      shell: bash
+    - name: Generate Doxygen documentation
+      run: doxygen
+      shell: bash
+    - name: Create .nojekyll
+      run: touch ${{ inputs.folder }}/.nojekyll
+      shell: bash
+    - name: Deploy to github pages
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        github_token: ${{ inputs.github_token }}
+        branch: $${ inputs.branch }}
+        folder: {{ inputs.folder }}
+

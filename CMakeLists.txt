@@ -29,5 +29,4 @@ if (DOXYGEN_FOUND)
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_IN}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-    message("Doxygen build started")
 endif()
